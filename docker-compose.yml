@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "admin"
+
+    ports:
+      - 5432:5432
+    volumes:
+      - /home/leonardo/workspace/resistencia-api-develop/data-1:/var/lib/postgresql/data
+    networks:
+      - postgres-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@sefaz.gov.ac.gov.br"
+      PGADMIN_DEFAULT_PASSWORD: "admin"
+
+    ports:
+      - "1543:80"
+    depends_on:
+      - postgres
+    networks:
+      - postgres-network
+networks:
+  postgres-network:
+    driver: bridge
+
+
