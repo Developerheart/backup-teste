@@ -1,6 +1,8 @@
 package io.github.develoeprheart.repository.localizacao;
 
+import io.github.develoeprheart.repository.rebelde.Rebelde;
 import io.github.develoeprheart.verbos.post.requestes.LocalizacaoRequest;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -8,18 +10,32 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "localizacoes")
+@Table(name = "localizacao")
 public class Localizacao implements Serializable {
     private static final long serialVersionUID = 1L;
 
+
     @Id
-    @Basic(optional = false)
-    @Column(name = "id", unique=true, nullable = false)
+//    @GeneratedValue(generator = "uuid2")
+//    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "id")
     private UUID id;
     private String nome;
     private Long latitude;
     private Long longitude;
 
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "id")
+    private Rebelde rebelde;
+
+    public Rebelde getRebelde() {
+        return rebelde;
+    }
+
+    public void setRebelde(Rebelde rebelde) {
+        this.rebelde = rebelde;
+    }
 
     public Localizacao(UUID id, String nome, Long latitude, Long longitude) {
         this.id = id;

@@ -1,20 +1,23 @@
 package io.github.develoeprheart.repository.inventario;
 
+import io.github.develoeprheart.repository.rebelde.Rebelde;
 import io.github.develoeprheart.verbos.post.requestes.InventoryRequest;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.UUID;
 
 @Entity
-@Table(name = "Inventarios")
+@Table(name = "inventario")
 public class Inventario implements Serializable {
     private static final long serialVersionUID = 1L;
 
+
     @Id
-    @Basic(optional = false)
-    @Column(name = "id", unique=true, nullable = false)
+    @Column(name = "id")
     private UUID id;
+
 
     private Integer agua;
 
@@ -23,6 +26,23 @@ public class Inventario implements Serializable {
     private Integer comida;
 
     private Integer arma;
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "id")
+    private Rebelde rebelde;
+
+
+
+
+
+    public Rebelde getRebelde() {
+        return rebelde;
+    }
+
+    public void setRebelde(Rebelde rebelde) {
+        this.rebelde = rebelde;
+    }
 
     public Inventario() {
     }

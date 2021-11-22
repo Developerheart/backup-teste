@@ -2,6 +2,8 @@ package io.github.develoeprheart.repository.rebelde;
 
 import io.github.develoeprheart.repository.inventario.Inventario;
 import io.github.develoeprheart.repository.localizacao.Localizacao;
+import lombok.Builder;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serial;
@@ -10,15 +12,19 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "rebeldes")
+@Table(name = "rebelde")
+@Builder
 public class Rebelde implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+
     @Id
-    @Basic(optional = false)
-    @Column(name = "id", unique=true, nullable = false)
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "id")
     private UUID id;
+
 
     public void setId(UUID id) {
         this.id = id;
@@ -27,14 +33,24 @@ public class Rebelde implements Serializable {
     private String nome;
     private Integer idade;
     private Character genero;
-//    @OneToOne(targetEntity = Localizacao.class, cascade = CascadeType.ALL,  fetch = FetchType.LAZY)
-    @OneToOne(targetEntity = Localizacao.class,  cascade = CascadeType.ALL)
+
+    @OneToOne(mappedBy = "rebelde",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @PrimaryKeyJoinColumn
     private Localizacao localizacao;
 
-    @OneToOne(targetEntity = Inventario.class, cascade = CascadeType.ALL, optional = false, fetch = FetchType.LAZY)
+    @OneToOne( mappedBy = "rebelde", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @PrimaryKeyJoinColumn
     private Inventario inventario;
 
 
+    public Rebelde(UUID id, String nome, Integer idade, Character genero, Localizacao localizacao, Inventario inventario) {
+        this.id = id;
+        this.nome = nome;
+        this.idade = idade;
+        this.genero = genero;
+        this.localizacao = localizacao;
+        this.inventario = inventario;
+    }
 
     public Rebelde(String nome, Integer idade, Character genero, Localizacao localizacao, Inventario inventario) {
         this.nome = nome;
@@ -83,7 +99,18 @@ public class Rebelde implements Serializable {
     }
 
     public void setLocalizacao(Localizacao localizacao) {
+        localizacao.setRebelde(this);
         this.localizacao = localizacao;
+    }
+
+
+    public void novaLocalizacao(Localizacao localizacao){
+        this.localizacao = new Localizacao();
+        this.localizacao.setId(localizacao.getId());
+        this.localizacao.setNome(localizacao.getNome());
+        this.localizacao.setLongitude(localizacao.getLongitude());
+        this.localizacao.setLatitude(localizacao.getLatitude());
+
     }
 
     public Inventario getInventario() {
@@ -91,6 +118,7 @@ public class Rebelde implements Serializable {
     }
 
     public void setInventario(Inventario inventario) {
+        inventario.setRebelde(this);
         this.inventario = inventario;
     }
 

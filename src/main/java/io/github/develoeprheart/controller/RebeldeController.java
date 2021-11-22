@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.function.EntityResponse;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -37,6 +38,8 @@ public class RebeldeController {
             entidade.setInventario(new Inventario(rebeldeRequest.getInventario()));
             entidade.setLocalizacao(new Localizacao(rebeldeRequest.getLocalizacao()));
             Rebelde rebeldinho = rebeldeService.save(entidade);
+
+            System.out.println(rebeldinho + "   -- - -- - -- ");
             RebeldeResponse response = new RebeldeResponse();
             BeanUtils.copyProperties(rebeldinho,  response);
             response.setLocalizacao(new LocalizacaoRequest(entidade.getLocalizacao()));
@@ -61,7 +64,7 @@ public class RebeldeController {
             rebelde.setLocalizacao(rebeldeRequest.localizacao(id));
             rebeldeService.save(rebelde);
             PatchRebeldeResponse response = new PatchRebeldeResponse();
-            BeanUtils.copyProperties(rebelde, response, "localizacao", "inventario");
+            BeanUtils.copyProperties(rebelde, response, "localizacao, inventario");
 
             response.setLocalizacao(rebelde.getLocalizacao());
             response.setInventario(rebelde.getInventario());
@@ -71,5 +74,22 @@ public class RebeldeController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new PatchRebeldeResponse());
         }
     }
+
+    @GetMapping("/")
+    public List<RebeldeResponse> rebeldes(@RequestParam UUID id, @RequestParam String nome){
+        return  null;
+    }
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity<RebeldeResponse> findByID(@PathVariable UUID id){
+
+        Rebelde rebelde = rebeldeService.findById(id);
+        RebeldeResponse ew = new RebeldeResponse();
+        BeanUtils.copyProperties(rebelde, ew);
+        return ResponseEntity.status(HttpStatus.OK).body(ew);
+
+    }
+
 
 }
